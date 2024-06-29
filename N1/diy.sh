@@ -24,6 +24,7 @@ echo "
 # 插件
 #CONFIG_PACKAGE_luci-theme-design=y
 CONFIG_PACKAGE_luci-app-mosdns=y
+CONFIG_PACKAGE_luci-app-openclash=y
 CONFIG_PACKAGE_luci-app-turboacc=y
 " >> .config
 
