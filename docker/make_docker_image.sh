@@ -26,7 +26,7 @@
 #
 # Set default parameters
 current_path="${PWD}"
-openwrt_path="${current_path}/openwrt/output"
+openwrt_path="${current_path}/openwrt/bin/targets/*/*"
 openwrt_rootfs_file="*rootfs.tar.gz"
 docker_rootfs_file="openwrt-docker-armvirt-64-default-rootfs.tar.gz"
 docker_path="${current_path}/docker"
