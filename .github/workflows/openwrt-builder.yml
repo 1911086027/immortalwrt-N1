@@ -14,6 +14,8 @@ env:
   CONFIG_FILE: N1/.config
   DIY_SH: N1/diy.sh
   FILES: N1/files
+  MAKE_DOCKER_SH: make_docker_image.sh
+  DOCKER_OUTPATH: out
   TZ: Asia/Shanghai
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
@@ -25,7 +27,7 @@ jobs:
     - name: 准备完成
       uses: actions/checkout@main
 
-    - name: Free up space
+    - name: 清理空间
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: false
@@ -100,11 +102,10 @@ jobs:
       uses: unifreq/openwrt_packit@master
       env:
         OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
-        KERNEL_VERSION_NAME: 5.15.152
-        PACKAGE_SOC: diy
+        KERNEL_VERSION_NAME: 5.15.y
+        PACKAGE_SOC: s905d
         GZIP_IMGS: .xz
-        SCRIPT_DIY_PATH: N1/mk_s905d_n1.sh
-        WHOAMI: innmonkey
+        WHOAMI: pumpkin
         SW_FLOWOFFLOAD: 1
         SFE_FLOW: 0
         ENABLE_WIFI_K510: 0
@@ -125,7 +126,7 @@ jobs:
 
         ⏱️ 编译时间: $(date +"%Y年%m月%d日%H时%M分")
 
-        🌐 管理地址: 192.168.0.2
+        🌐 管理地址: 192.168.128.3
 
         👤 用户名: root
 
@@ -143,9 +144,35 @@ jobs:
         body_path: release.txt
         token: ${{ env.GITHUB_TOKEN }}
 
-    - name: TG推送
-      run: curl "https://api2.pushdeer.com/message/push?pushkey=${{ secrets.PUSHDEER_TOKEN }}&text=【Github Actions】OpenWrt-N1打包成功"
+#docker-uploader
+    - name: 创建Docker镜像
+      if: ${{ env.compile_status == 'success' }} && !cancelled()
+      run: |
+        chmod +x ${MAKE_DOCKER_SH}
+        ${MAKE_DOCKER_SH}
+        echo "docker_status=success" >> $GITHUB_ENV
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: 登录Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+
+    - name: 上传Docker Hub
+      if: ${{ env.docker_status == 'success' }} && !cancelled()
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        platforms: linux/arm64
+        context: ${{ env.DOCKER_OUTPATH }}
+        tags: "${{ inputs.docker_img }}"
+        
     - name: 删除运行记录
       uses: Mattraks/delete-workflow-runs@main
       with:
