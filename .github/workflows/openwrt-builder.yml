@@ -14,8 +14,9 @@ env:
   CONFIG_FILE: N1/.config
   DIY_SH: N1/diy.sh
   FILES: N1/files
-  MAKE_DOCKER_SH: make_docker_image.sh
+  MAKE_DOCKER_SH: docker/make_docker_image.sh
   DOCKER_OUTPATH: out
+  DOCKER_IMG: 1911086027/openwrt_cortex-a53:personal
   TZ: Asia/Shanghai
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
@@ -171,7 +172,7 @@ jobs:
         push: true
         platforms: linux/arm64
         context: ${{ env.DOCKER_OUTPATH }}
-        tags: "${{ inputs.docker_img }}"
+        tags: ${{ env.DOCKER_IMG }}
         
     - name: 删除运行记录
       uses: Mattraks/delete-workflow-runs@main
