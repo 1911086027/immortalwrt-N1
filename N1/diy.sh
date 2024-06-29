@@ -18,14 +18,14 @@ git clone -b js --single-branch https://github.com/gngpp/luci-theme-design packa
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 git clone --depth=1 https://github.com/ophub/luci-app-amlogic package/amlogic
-git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-turboacc
+#git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-turboacc
 
 echo "
 # 插件
 CONFIG_PACKAGE_luci-theme-design=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-openclash=y
-CONFIG_PACKAGE_luci-app-turboacc=y
+#CONFIG_PACKAGE_luci-app-turboacc=y
 CONFIG_PACKAGE_luci-app-adguardhome=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
 " >> .config
