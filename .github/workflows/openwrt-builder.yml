@@ -20,6 +20,7 @@ env:
   MAKE_DOCKER_SH: docker/make_docker_image.sh
   DOCKER_OUTPATH: out
   DOCKER_IMG: 1911086027/openwrt_cortex-a53:personal
+  UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
