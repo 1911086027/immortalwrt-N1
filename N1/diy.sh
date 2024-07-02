@@ -16,16 +16,15 @@ function git_sparse_clone() {
 # Add packages
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
-git clone --depth=1 https://github.com/ophub/luci-app-amlogic package/amlogic
-#git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-turboacc
+git clone https://github.com/sirpdboy/luci-app-ddns-go.git package/ddns-go
+git clone https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
 
 echo "
 # 插件
 CONFIG_PACKAGE_luci-app-mosdns=y
+CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-openclash=y
 CONFIG_PACKAGE_luci-app-adguardhome=y
-CONFIG_PACKAGE_luci-app-ddns-go=y
-#CONFIG_PACKAGE_luci-app-turboacc=y
 " >> .config
 
 # 修改默认IP
