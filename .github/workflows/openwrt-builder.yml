@@ -48,7 +48,8 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt-get -qq update -y
-        sudo -E apt-get -qq install -y $(curl -fsSL https://raw.githubusercontent.com/nantayo/My-Pkg/master/2305)        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq install -y $(curl -fsSL https://raw.githubusercontent.com/nantayo/My-Pkg/master/2305)        
+        sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
@@ -113,7 +114,7 @@ jobs:
         SW_FLOWOFFLOAD: 1
         SFE_FLOW: 0
         HW_FLOWOFFLOAD: 0
-        ENABLE_WIFI_K510: 0
+        ENABLE_WIFI_K510: 1
 
     - name: 生成发布标签
       if: ${{ env.PACKAGED_STATUS == 'success' }} && !cancelled()
