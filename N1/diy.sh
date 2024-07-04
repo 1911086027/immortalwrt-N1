@@ -15,12 +15,9 @@ function git_sparse_clone() {
 
 # Add packages
 git clone https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
-git clone https://github.com/lisaac/luci-app-dockerman.git package/luci-app-dockerman
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
-#git clone https://github.com/sirpdboy/luci-app-ddns-go.git package/ddns-go
-#git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
-#git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/luci-app-adguardhome
+git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/luci-app-adguardhome
 
 echo "
 # 插件
@@ -29,7 +26,11 @@ CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-openclash=y
+CONFIG_PACKAGE_luci-app-homeproxy=y
 CONFIG_PACKAGE_luci-app-adguardhome=y
+CONFIG_PACKAGE_luci-app-qbittorrent=y
+CONFIG_PACKAGE_luci-app-rclone=y
+CONFIG_PACKAGE_luci-app-alist=y
 " >> .config
 
 # 修改默认IP
