@@ -70,7 +70,6 @@ jobs:
         sudo lvcreate -n runner -l 100%FREE github
         sudo mkfs.xfs /dev/github/runner
         sudo mount /dev/github/runner /workdir
-        sudo chown -R runner.runner /workdir
         df -Th
 
     - name: 克隆源码
