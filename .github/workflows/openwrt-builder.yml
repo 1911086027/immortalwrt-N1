@@ -128,7 +128,6 @@ jobs:
       env:
         OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
         KERNEL_VERSION_NAME: 6.6.y_6.1.y_5.15.y_5.10.y_5.4.y
-        KERNEL_AUTO_LATEST: false
         PACKAGE_SOC: s905d
         WHOAMI: pumpkin
 
