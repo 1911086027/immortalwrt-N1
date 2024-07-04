@@ -12,12 +12,11 @@ config interface 'docker'
 config interface 'lan'
 	option proto 'static'
 	option netmask '255.255.255.0'
-	option device 'eth0'
+	option device 'br-lan'
 	option ipaddr '192.168.128.3'
 	option gateway '192.168.128.2'
 	option delegate '0'
 	option broadcast '192.168.128.255'
-	list dns '192.168.128.2'
 
 config device
 	option name 'br-lan'
@@ -25,14 +24,8 @@ config device
 	list ports 'eth0'
 
 config device
-	option type 'bridge'
 	option name 'docker0'
-
+	option type 'bridge'
+	
 config globals 'globals'
 	option packet_steering '1'
-
-config interface 'utun'
-	option proto 'none'
-	option ifname 'utun'
-	option device 'utun'
-	option auto '0'
