@@ -36,6 +36,7 @@ CONFIG_PACKAGE_luci-app-alist=y
 CONFIG_PACKAGE_ua2f=y
 CONFIG_UA2F_CUSTOM_USER_AGENT=y
 CONFIG_UA2F_USER_AGENT_STRING="Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405"
+CONFIG_PACKAGE_luci-app-ua2f=y
 " >> .config
 
 # 修改默认IP
