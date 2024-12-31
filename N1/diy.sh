@@ -26,13 +26,13 @@ CONFIG_PACKAGE_luci-app-amlogic=y
 CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
-CONFIG_PACKAGE_luci-app-socat=y
+#CONFIG_PACKAGE_luci-app-socat=y
 CONFIG_PACKAGE_luci-app-openclash=y
 CONFIG_PACKAGE_luci-app-homeproxy=y
 CONFIG_PACKAGE_luci-app-adguardhome=y
 CONFIG_PACKAGE_luci-app-qbittorrent=y
 CONFIG_PACKAGE_luci-app-rclone=y
-CONFIG_PACKAGE_luci-app-alist=y
+#CONFIG_PACKAGE_luci-app-alist=y
 #CONFIG_PACKAGE_ua2f=y
 #CONFIG_PACKAGE_luci-app-ua2f=y
 " >> .config
