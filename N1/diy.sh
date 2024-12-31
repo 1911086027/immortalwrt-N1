@@ -18,7 +18,7 @@ git clone https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/luci-app-adguardhome
-git clone https://github.com/Zxilly/UA2F.git package/UA2F
+#git clone https://github.com/Zxilly/UA2F.git package/UA2F
 
 echo "
 # 插件
@@ -33,8 +33,8 @@ CONFIG_PACKAGE_luci-app-adguardhome=y
 CONFIG_PACKAGE_luci-app-qbittorrent=y
 CONFIG_PACKAGE_luci-app-rclone=y
 CONFIG_PACKAGE_luci-app-alist=y
-CONFIG_PACKAGE_ua2f=y
-CONFIG_PACKAGE_luci-app-ua2f=y
+#CONFIG_PACKAGE_ua2f=y
+#CONFIG_PACKAGE_luci-app-ua2f=y
 " >> .config
 
 # 修改默认IP
