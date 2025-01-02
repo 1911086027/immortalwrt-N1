@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Remove packages
+rm -rf package/luci-app-amlogic
 rm -rf feeds/packages/net/v2ray-geodata
 
 # Git稀疏克隆，只克隆指定目录到本地
