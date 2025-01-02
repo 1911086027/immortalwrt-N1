@@ -7,6 +7,7 @@ config defaults
 	option output 'ACCEPT'
 	option forward 'REJECT'
 	option flow_offloading '1'
+	option flow_offloading_hw '1'
 
 config zone
 	option name 'lan'
@@ -14,7 +15,20 @@ config zone
 	option input 'ACCEPT'
 	option output 'ACCEPT'
 	option forward 'ACCEPT'
+
+config zone
+	option name 'wan'
+	list network 'wan'
+	list network 'wan6'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
 	option masq '1'
+	option mtu_fix '1'
+
+config forwarding
+	option src 'lan'
+	option dest 'uwan'
 
 config zone 'docker'
 	option input 'ACCEPT'
@@ -22,3 +36,7 @@ config zone 'docker'
 	option forward 'ACCEPT'
 	option name 'docker'
 	list network 'docker'
+
+config forwarding 'dockerd'
+	option src 'docker'
+	option dest 'uwan'
