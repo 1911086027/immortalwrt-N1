@@ -2,6 +2,7 @@
 
 # Remove packages
 rm -rf package/luci-app-amlogic
+
 rm -rf feeds/packages/net/v2ray-geodata
 
 # Git稀疏克隆，只克隆指定目录到本地
@@ -28,7 +29,7 @@ CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
 #CONFIG_PACKAGE_luci-app-socat=y
-CONFIG_PACKAGE_luci-app-openclash=y
+#CONFIG_PACKAGE_luci-app-openclash=y
 CONFIG_PACKAGE_luci-app-homeproxy=y
 #CONFIG_PACKAGE_luci-app-adguardhome=y
 #CONFIG_PACKAGE_luci-app-qbittorrent=y
