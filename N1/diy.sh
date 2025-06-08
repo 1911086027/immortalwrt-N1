@@ -35,6 +35,7 @@ CONFIG_PACKAGE_luci-app-homeproxy=y
 #CONFIG_PACKAGE_luci-app-qbittorrent=y
 #CONFIG_PACKAGE_luci-app-rclone=y
 #CONFIG_PACKAGE_luci-app-alist=y
+CONFIG_PACKAGE_luci-app-acme=y
 #CONFIG_PACKAGE_ua2f=y
 #CONFIG_PACKAGE_luci-app-ua2f=y
 " >> .config
