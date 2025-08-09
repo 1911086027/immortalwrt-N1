@@ -26,7 +26,7 @@ git clone https://github.com/EasyTier/luci-app-easytier.git package/luci-app-eas
 echo "
 # 插件
 CONFIG_PACKAGE_luci-app-amlogic=y
-CONFIG_PACKAGE_luci-app-dockerman=y
+#CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
 #CONFIG_PACKAGE_luci-app-socat=y
