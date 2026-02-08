@@ -3,7 +3,7 @@
 # Remove packages
 rm -rf package/luci-app-amlogic
 
-rm -rf feeds/packages/net/v2ray-geodata
+#rm -rf feeds/packages/net/v2ray-geodata
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {
@@ -17,8 +17,8 @@ function git_sparse_clone() {
 
 # Add packages
 git clone https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
-git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
-git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
+#git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
+#git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 #git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/luci-app-adguardhome
 git clone https://github.com/EasyTier/luci-app-easytier.git package/luci-app-easytier
 #git clone https://github.com/Zxilly/UA2F.git package/UA2F
@@ -27,7 +27,7 @@ echo "
 # 插件
 CONFIG_PACKAGE_luci-app-amlogic=y
 #CONFIG_PACKAGE_luci-app-dockerman=y
-CONFIG_PACKAGE_luci-app-mosdns=y
+#CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
 #CONFIG_PACKAGE_luci-app-socat=y
 #CONFIG_PACKAGE_luci-app-openclash=y
