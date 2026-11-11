@@ -130,7 +130,7 @@ jobs:
       if: ${{ env.compile_status == 'success' && !cancelled() }}
       uses: ophub/flippy-openwrt-actions@main
       env:
-        OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
+        OPENWRT_ARMVIRT: openwrt/bin/targets/armsr/armv8/openwrt-armsr-armv8-generic-rootfs.tar.gz
         KERNEL_VERSION_NAME: 6.12.y_6.6.y_6.1.y_5.15.y_5.10.y_5.4.y
         PACKAGE_SOC: s905d
         WHOAMI: pumpkin
@@ -177,12 +177,15 @@ jobs:
         echo "docker_status=success" >> $GITHUB_ENV
 
     - name: Set up QEMU
+      if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}
       uses: docker/setup-qemu-action@v3
     
     - name: Set up Docker Buildx
+      if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}
       uses: docker/setup-buildx-action@v3
     
     - name: 检查 Docker Hub 凭据
+      if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -192,6 +195,7 @@ jobs:
 
     - name: 生成 Docker 标签
       id: docker_meta
+      if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}
       uses: docker/metadata-action@v5
       with:
         images: ${{ env.DOCKER_IMAGE }}
@@ -201,13 +205,14 @@ jobs:
           type=sha,prefix=sha-
 
     - name: 登录 Docker Hub
+      if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: 发布 Docker 镜像
-      if: ${{ env.docker_status == 'success' && !cancelled() }}
+      if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}
       uses: docker/build-push-action@v5
       with:
         push: true
@@ -221,6 +226,7 @@ jobs:
         
     - name: 删除运行记录
       uses: Mattraks/delete-workflow-runs@main
+      if: ${{ !failure() && !cancelled() }}
       with:
         retain_days: 1
         keep_minimum_runs: 1
