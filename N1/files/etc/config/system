@@ -1,0 +1,12 @@
+config system
+	option hostname 'ImmortalWrt-N1'
+	option timezone 'CST-8'
+	option zonename 'Asia/Shanghai'
+	option log_size '64'
+
+config timeserver 'ntp'
+	option enabled '1'
+	option enable_server '0'
+	list server 'ntp.aliyun.com'
+	list server 'ntp.tencent.com'
+	list server 'pool.ntp.org'
