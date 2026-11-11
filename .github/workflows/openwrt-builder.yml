@@ -2,7 +2,7 @@ name: Build ImmortalWrt for N1
 
 on:
   workflow_dispatch:
-   inputs:
+    inputs:
       ssh:
         description: 'SSH connection to Actions'
         required: false
@@ -22,15 +22,18 @@ env:
   DOCKER_IMG: 1911086027/openwrt_cortex-a53:personal
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
 jobs:
   build:
     runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    permissions:
+      contents: write
+      actions: write
 
     steps:
     - name: 准备完成
-      uses: actions/checkout@main
+      uses: actions/checkout@v4
 
     - name: 清理空间
       uses: jlumbroso/free-disk-space@main
@@ -136,7 +139,7 @@ jobs:
       run: |
         echo "release_tag=$(date +"%Y.%m.%d-%H.%M")" >> ${GITHUB_OUTPUT}
         touch release.txt
-        echo "
+        printf '%s\n' "
         🍁 注意事项：首次使用建议全新刷写
           
         💻 适用机型: 斐讯N1
@@ -151,8 +154,8 @@ jobs:
 
         👤 用户名: root
 
-        🔒 密码: password 
-        
+        🔒 首次登录后请立即设置并保存管理员密码
+
         " >> release.txt
         echo "tag_status=success" >> $GITHUB_ENV
 
@@ -163,7 +166,7 @@ jobs:
         tag_name: OpenWrt_${{ env.PACKAGED_OUTPUTDATE }}
         files: ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz
         body_path: release.txt
-        token: ${{ env.GITHUB_TOKEN }}
+        token: ${{ github.token }}
 
 #docker-uploader
     - name: 创建Docker镜像

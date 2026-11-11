@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -Eeuo pipefail
 #================================================================================================
 #
 # This file is licensed under the terms of the GNU General Public
@@ -40,6 +41,8 @@ INFO="[\033[94m INFO \033[0m]"
 SUCCESS="[\033[92m SUCCESS \033[0m]"
 WARNING="[\033[93m WARNING \033[0m]"
 ERROR="[\033[91m ERROR \033[0m]"
+
+trap 'error_msg "Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}"' ERR
 #
 #================================================================================================
 
@@ -53,7 +56,7 @@ check_depends() {
     is_dpkg="0"
     dpkg_packages=("tar" "gzip")
     i="1"
-    for package in ${dpkg_packages[*]}; do
+    for package in "${dpkg_packages[@]}"; do
         [[ -n "$(dpkg -l | awk '{print $2}' | grep -w "^${package}$" 2>/dev/null)" ]] || is_dpkg="1"
         let i++
     done
@@ -62,8 +65,8 @@ check_depends() {
     if [[ "${is_dpkg}" -eq "1" ]]; then
         echo -e "${STEPS} Start installing the necessary dependencies..."
         sudo apt-get update
-        sudo apt-get install -y ${dpkg_packages[*]}
-        [[ "${?}" -ne "0" ]] && error_msg "Dependency installation failed."
+        sudo apt-get install -y "${dpkg_packages[@]}" ||
+            error_msg "Dependency installation failed."
     fi
 }
 
@@ -72,9 +75,9 @@ find_openwrt() {
     echo -e "${STEPS} Start searching for OpenWrt file..."
 
     # Find whether the OpenWrt file exists
-    openwrt_file_name="$(ls ${openwrt_path}/${openwrt_rootfs_file} 2>/dev/null | head -n 1 | awk -F "/" '{print $NF}')"
+    openwrt_file_name="$(find ${openwrt_path} -maxdepth 1 -type f -name "${openwrt_rootfs_file}" -print -quit)"
     if [[ -n "${openwrt_file_name}" ]]; then
-        echo -e "${INFO} OpenWrt file: [ ${openwrt_file_name} ]"
+        echo -e "${INFO} OpenWrt file: [ ${openwrt_file_name##*/} ]"
     else
         error_msg "There is no [ ${openwrt_rootfs_file} ] file in the [ ${openwrt_path} ] directory."
     fi
@@ -89,7 +92,7 @@ adjust_settings() {
 
     echo -e "${INFO} Unpack Openwrt."
     rm -rf ${tmp_path} && mkdir -p ${tmp_path}
-    tar -xzf ${openwrt_path}/${openwrt_file_name} -C ${tmp_path}
+    tar -xzf "${openwrt_file_name}" -C "${tmp_path}"
 
     # Remove unused files
     echo -e "${INFO} Remove useless files."
@@ -127,7 +130,8 @@ adjust_settings() {
     # Relink the kmod program
     [[ -f "${common_files}/sbin/kmod" ]] && (
         echo -e "${INFO} Adjust kmod settings."
-        cp -f ${common_files}/sbin/kmod ${tmp_path}/sbin/kmod
+        mkdir -p -- "${tmp_path}/sbin"
+        cp -f -- "${common_files}/sbin/kmod" "${tmp_path}/sbin/kmod"
         chmod +x ${tmp_path}/sbin/kmod
         kmod_list="depmod insmod lsmod modinfo modprobe rmmod"
         for ki in ${kmod_list}; do
@@ -150,20 +154,17 @@ make_dockerimg() {
     echo -e "${STEPS} Start making docker image..."
 
     # Make docker image
-    tar -czf ${docker_rootfs_file} *
-    [[ "${?}" -eq "0" ]] || error_msg "Docker image creation failed."
+    tar -czf "${current_path}/${docker_rootfs_file}" .
 
     # Move the docker image to the output directory
     rm -rf ${out_path} && mkdir -p ${out_path}
-    mv -f ${docker_rootfs_file} ${out_path}
-    [[ "${?}" -eq "0" ]] || error_msg "Docker image move failed."
+    mv -f -- "${current_path}/${docker_rootfs_file}" "${out_path}"
     echo -e "${INFO} Docker image packaging succeeded."
 
     cd ${current_path}
 
     # Add Dockerfile
-    cp -f ${docker_path}/Dockerfile ${out_path}
-    [[ "${?}" -eq "0" ]] || error_msg "Dockerfile addition failed."
+    cp -f -- "${docker_path}/Dockerfile" "${out_path}"
     echo -e "${INFO} Dockerfile added successfully."
 
     # Remove temporary directory
