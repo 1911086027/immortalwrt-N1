@@ -32,6 +32,7 @@ git clone --depth=1 https://github.com/ophub/luci-app-amlogic.git package/luci-a
 #git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 #git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/luci-app-adguardhome
 git clone --depth=1 https://github.com/EasyTier/luci-app-easytier.git package/luci-app-easytier
+git clone --depth=1 --branch v1.8.8-1 https://github.com/hello-yunshu/luci-app-nginx-manager.git package/luci-app-nginx-manager
 #git clone https://github.com/Zxilly/UA2F.git package/UA2F
 
 cat >> .config <<'EOF'
@@ -50,6 +51,7 @@ CONFIG_PACKAGE_luci-app-homeproxy=y
 #CONFIG_PACKAGE_luci-app-alist=y
 #CONFIG_PACKAGE_luci-app-acme=y
 CONFIG_PACKAGE_luci-app-easytier=y
+CONFIG_PACKAGE_luci-app-nginx-manager=y
 #CONFIG_PACKAGE_ua2f=y
 #CONFIG_PACKAGE_luci-app-ua2f=y
 EOF

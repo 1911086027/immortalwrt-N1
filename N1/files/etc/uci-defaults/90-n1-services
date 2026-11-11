@@ -1,0 +1,13 @@
+#!/bin/sh
+
+[ -n "$IPKG_INSTROOT" ] && exit 0
+
+if [ -x /etc/init.d/irqbalance ]; then
+	/etc/init.d/irqbalance enable
+fi
+
+if [ -x /etc/init.d/nginx ]; then
+	/etc/init.d/nginx enable
+fi
+
+exit 0
