@@ -6,12 +6,15 @@ readonly WORKSPACE="${GITHUB_WORKSPACE:-$(cd -- "${SCRIPT_DIR}/.." && pwd)}"
 
 trap 'printf "diy.sh failed at line %s: %s\n" "${BASH_LINENO[0]}" "${BASH_COMMAND}" >&2' ERR
 
+# 删除上游可能残留的同名插件目录，避免重复定义。
 rm -rf -- package/luci-app-amlogic
 
+# 引入固定版本的第三方插件。
 git clone --depth=1 https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
 git clone --depth=1 https://github.com/EasyTier/luci-app-easytier.git package/luci-app-easytier
 git clone --depth=1 https://github.com/hello-yunshu/luci-app-nginx-manager.git package/luci-app-nginx-manager
 
+# 写入插件选择。
 cat >> .config <<'EOF'
 
 CONFIG_PACKAGE_luci-app-amlogic=y
@@ -22,17 +25,17 @@ CONFIG_PACKAGE_luci-app-easytier=y
 CONFIG_PACKAGE_luci-app-nginx-manager=y
 EOF
 
-# 修改默认IP
+# 修改默认管理地址。
 sed -i 's/192.168.1.1/192.168.128.3/g' package/base-files/files/bin/config_generate
 
-# 修改默认主题
+# 修改默认主题。
 sed -i 's/luci-theme-design/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
-# 修改主机名
+# 修改默认主机名。
 sed -i 's/ImmortalWrt/OpenWrt/g' package/base-files/files/bin/config_generate
 
-# 修改主题背景
+# 安装 Argon 主题资源。
 readonly ARGON_DIR="${WORKSPACE}/argon"
 readonly ARGON_TARGET="feeds/luci/themes/luci-theme-argon"
 mkdir -p -- "${ARGON_TARGET}/htdocs/luci-static/argon/img" \

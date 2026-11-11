@@ -1,8 +1,8 @@
 # 项目简介
 本固件适配斐讯 N1 旁路由模式，追求轻量（请注意：不具备 PPPoE、WiFi 相关功能）。<br>
-固件包含默认皮肤、完整 IPv6 支持，以及下列 luci-app：<br>
+固件包含默认皮肤、IPv6 内核支持，以及下列 luci-app：<br>
 - amlogic、dockerman、homeproxy、easytier、nginx-manager
-- ddns-go、动态 DNS、网络唤醒
+- ddns-go、网络唤醒
 - diskman、ttyd、opkg
 ***
 # 使用说明
@@ -22,7 +22,7 @@
 
 ## Docker 与公网访问
 
-`docker/Dockerfile` 使用编译出的 ARM64 rootfs 创建容器，`EXPOSE 22 80 443` 只是镜像元数据，不会自动提供公网入口。运行容器时仍需映射端口，例如 `-p 80:80 -p 443:443`；公网访问还需要在上级路由器转发 TCP 80/443 到 N1，并准备域名、证书和防火墙规则。
+`docker/Dockerfile` 使用编译出的 ARM64 rootfs 创建容器，当前不声明 `EXPOSE`，避免让人误以为端口会自动开放。运行容器时仍需显式映射端口，例如 `-p 80:80 -p 443:443`；公网访问还需要在上级路由器转发 TCP 80/443 到 N1，并准备域名、证书和防火墙规则。
 
 固件内置 `luci-app-nginx-manager`，可在 LuCI 的“服务 → Nginx Manager”中创建反向代理站点，支持 WebSocket 和 ACME 证书。建议只转发到具体服务，不要把 `8080/8443` 管理端口转发到公网；没有公网 IPv4 时可使用 IPv6、端口映射服务或安全隧道。
 

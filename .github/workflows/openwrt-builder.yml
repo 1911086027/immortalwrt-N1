@@ -109,7 +109,7 @@ jobs:
       uses: P3TERX/ssh2actions@main
       if: (github.event.inputs.ssh == 'true') || contains(github.event.action, 'ssh')
 
-    - name: 下载软件包
+    - name: 检查配置并下载软件包
       working-directory: ./openwrt
       run: |
         make defconfig
@@ -168,7 +168,6 @@ jobs:
         body_path: release.txt
         token: ${{ github.token }}
 
-#docker-uploader
     - name: 创建Docker镜像
       if: ${{ env.compile_status == 'success' && !cancelled() }}
       run: |
