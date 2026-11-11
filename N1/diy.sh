@@ -10,9 +10,14 @@ trap 'printf "diy.sh failed at line %s: %s\n" "${BASH_LINENO[0]}" "${BASH_COMMAN
 rm -rf -- package/luci-app-amlogic
 
 # 引入固定版本的第三方插件。
+# OpenList v4.2.9 需要 Go 1.27 工具链。
+rm -rf -- feeds/packages/lang/golang
+git clone --depth=1 --branch 27.x https://github.com/OpenListTeam/packages_lang_golang.git feeds/packages/lang/golang
+
 git clone --depth=1 https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
 git clone --depth=1 https://github.com/EasyTier/luci-app-easytier.git package/luci-app-easytier
 git clone --depth=1 https://github.com/hello-yunshu/luci-app-nginx-manager.git package/luci-app-nginx-manager
+git clone --depth=1 --branch v4.2.9 https://github.com/OpenListTeam/OpenList-OpenWRT.git package/openlist
 
 # 写入插件选择。
 cat >> .config <<'EOF'
@@ -23,6 +28,7 @@ CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-homeproxy=y
 CONFIG_PACKAGE_luci-app-easytier=y
 CONFIG_PACKAGE_luci-app-nginx-manager=y
+CONFIG_PACKAGE_luci-app-openlist=y
 EOF
 
 # 修改默认管理地址。
