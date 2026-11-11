@@ -7,5 +7,4 @@ LABEL org.opencontainers.image.title="ImmortalWrt N1" \
       org.opencontainers.image.source="https://github.com/1911086027/immortalwrt-N1" \
       org.opencontainers.image.created=$BUILD_DATE \
       org.opencontainers.image.revision=$VCS_REF
-EXPOSE 22 80 443
 ENTRYPOINT ["/sbin/init"]
