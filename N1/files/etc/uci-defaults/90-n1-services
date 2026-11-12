@@ -10,25 +10,7 @@ if [ -x /etc/init.d/nginx ]; then
 	/etc/init.d/nginx enable
 fi
 
-# HomeProxy 预置 VMess 服务端端口，但不自动启动。
-# UUID、证书和域名必须由用户配置完成后再启用，避免刷机后直接暴露代理服务。
-if [ -x /sbin/uci ] && [ -f /etc/config/homeproxy ]; then
-	if ! uci -q show homeproxy.n1_vmess >/dev/null; then
-		uci set homeproxy.n1_vmess=server
-	fi
-	uci set homeproxy.n1_vmess.label='N1 VMess 809'
-	uci set homeproxy.n1_vmess.enabled='0'
-	uci set homeproxy.n1_vmess.firewall='0'
-	uci set homeproxy.n1_vmess.type='vmess'
-	uci set homeproxy.n1_vmess.address='0.0.0.0'
-	uci set homeproxy.n1_vmess.port='809'
-	uci set homeproxy.n1_vmess.tls='1'
-	uci set homeproxy.n1_vmess.tls_cert_path='/etc/homeproxy/certs/server.crt'
-	uci set homeproxy.n1_vmess.tls_key_path='/etc/homeproxy/certs/server.key'
-	uci commit homeproxy
-fi
-
-# 仅生成无线配置并明确关闭无线，后续可在 LuCI 中按实际芯片校准国家码和 SSID。
+# 生成无线配置但保持关闭，避免首次启动后意外发射无线网络。
 if [ ! -f /etc/config/wireless ] && command -v wifi >/dev/null 2>&1; then
 	wifi config >/dev/null 2>&1 || true
 fi

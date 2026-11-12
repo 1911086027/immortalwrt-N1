@@ -28,12 +28,15 @@ jobs:
       fail-fast: false
       matrix:
         repo_branch:
-          - openwrt-24.10
-          - openwrt-25.12
+          - repo: openwrt-24.10
+            docker_tag: personal-24.10
+          - repo: openwrt-25.12
+            docker_tag: personal-25.12
     runs-on: ubuntu-22.04
     timeout-minutes: 180
     env:
-      REPO_BRANCH: ${{ matrix.repo_branch }}
+      REPO_BRANCH: ${{ matrix.repo_branch.repo }}
+      DOCKER_TAG: ${{ matrix.repo_branch.docker_tag }}
     permissions:
       contents: write
       actions: write
@@ -207,9 +210,7 @@ jobs:
       with:
         images: ${{ env.DOCKER_IMAGE }}
         tags: |
-          type=raw,value=${{ env.REPO_BRANCH }}
-          type=raw,value=latest,enable=${{ env.REPO_BRANCH == 'openwrt-25.12' }}
-          type=sha,prefix=${{ env.REPO_BRANCH }}-sha-
+          type=raw,value=${{ env.DOCKER_TAG }}
 
     - name: 登录 Docker Hub
       if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}

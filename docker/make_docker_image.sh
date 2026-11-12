@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-# 生成 Docker rootfs 所需的文件路径。
-current_path="${PWD}"
-openwrt_path="${current_path}/openwrt/bin/targets/*/*"
-openwrt_rootfs_file="*rootfs.tar.gz"
+readonly script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly current_path="$(cd -- "${script_dir}/.." && pwd)"
+readonly openwrt_path="${current_path}/openwrt/bin/targets"
 docker_rootfs_file="openwrt-docker-armvirt-64-default-rootfs.tar.gz"
 docker_path="${current_path}/docker"
 common_files="${docker_path}/files"
@@ -23,37 +22,27 @@ error_msg() {
     exit 1
 }
 
-check_depends() {
-    is_dpkg="0"
-    dpkg_packages=("tar" "gzip")
-    for package in "${dpkg_packages[@]}"; do
-        [[ -n "$(dpkg -l | awk '{print $2}' | grep -w "^${package}$" 2>/dev/null)" ]] || is_dpkg="1"
-    done
-
-    if [[ "${is_dpkg}" -eq "1" ]]; then
-        echo -e "${STEPS} 正在安装必要依赖..."
-        sudo apt-get update
-        sudo apt-get install -y "${dpkg_packages[@]}" ||
-            error_msg "依赖安装失败。"
-    fi
-}
-
 find_openwrt() {
-    cd ${current_path}
+    command -v tar >/dev/null || error_msg "缺少 tar。"
+    command -v gzip >/dev/null || error_msg "缺少 gzip。"
+    cd "${current_path}"
     echo -e "${STEPS} 开始查找 OpenWrt rootfs 文件..."
 
-    openwrt_file_name="$(find ${openwrt_path} -maxdepth 1 -type f -name "${openwrt_rootfs_file}" -print -quit)"
-    if [[ -n "${openwrt_file_name}" ]]; then
+    mapfile -t rootfs_files < <(find "${openwrt_path}" -mindepth 3 -maxdepth 3 -type f -name '*rootfs.tar.gz' -print | sort)
+    if [[ "${#rootfs_files[@]}" -eq 1 ]]; then
+        openwrt_file_name="${rootfs_files[0]}"
         echo -e "${INFO} 找到 OpenWrt 文件：[ ${openwrt_file_name##*/} ]"
+    elif [[ "${#rootfs_files[@]}" -eq 0 ]]; then
+        error_msg "在 [ ${openwrt_path} ] 中找不到 rootfs.tar.gz。"
     else
-        error_msg "在 [ ${openwrt_path} ] 中找不到 [ ${openwrt_rootfs_file} ]。"
+        error_msg "找到多个 rootfs.tar.gz，请清理构建产物后重试：${rootfs_files[*]}"
     fi
 
     [[ -f "${docker_path}/Dockerfile" ]] || error_msg "缺少 Dockerfile。"
 }
 
 adjust_settings() {
-    cd ${current_path}
+    cd "${current_path}"
     echo -e "${STEPS} 开始调整 OpenWrt 文件..."
 
     echo -e "${INFO} 解压 OpenWrt rootfs。"
@@ -61,7 +50,7 @@ adjust_settings() {
     tar -xzf "${openwrt_file_name}" -C "${tmp_path}"
 
     echo -e "${INFO} 删除无用文件。"
-    rm -rf -- "${tmp_path}"/lib/firmware/* "${tmp_path}"/lib/modules/*
+    rm -rf -- "${tmp_path}/lib/firmware" "${tmp_path}/lib/modules"
     rm -f -- "${tmp_path}/root/.todo_rootfs_resize"
     find "${tmp_path}" -name '*.rej' -exec rm -f -- {} \;
     find "${tmp_path}" -name '*.orig' -exec rm -f -- {} \;
@@ -106,7 +95,7 @@ adjust_settings() {
 }
 
 make_dockerimg() {
-    cd ${tmp_path}
+    cd "${tmp_path}"
     echo -e "${STEPS} 开始制作 Docker 镜像 rootfs..."
 
     tar -czf "${current_path}/${docker_rootfs_file}" .
@@ -123,13 +112,12 @@ make_dockerimg() {
     rm -rf -- "${tmp_path}"
 
     sync && sleep 3
-    echo -e "${INFO} Docker files list: \n$(ls -l ${out_path})"
+    echo -e "${INFO} Docker files list: \n$(ls -l "${out_path}")"
     echo -e "${SUCCESS} Docker 镜像文件已生成。"
 }
 
 echo -e "${STEPS} Docker 镜像制作工具启动。"
 echo -e "${INFO} 工作目录：[ ${PWD} ]"
-check_depends
 find_openwrt
 adjust_settings
 make_dockerimg
