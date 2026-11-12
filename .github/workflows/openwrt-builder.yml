@@ -30,10 +30,10 @@ jobs:
         repo_branch:
           - repo: openwrt-24.10
             docker_tag: personal-24.10
-            release_version: 24.10
+            release_version: "24.10"
           - repo: openwrt-25.12
             docker_tag: personal-25.12
-            release_version: 25.12
+            release_version: "25.12"
     runs-on: ubuntu-22.04
     timeout-minutes: 180
     env:
