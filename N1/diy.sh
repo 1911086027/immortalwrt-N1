@@ -9,21 +9,24 @@ trap 'printf "diy.sh failed at line %s: %s\n" "${BASH_LINENO[0]}" "${BASH_COMMAN
 # 删除上游可能残留的同名插件目录，避免重复定义。
 rm -rf -- package/luci-app-amlogic
 
-# 引入固定版本的第三方插件。
-# OpenList v4.2.9 需要 Go 1.27 工具链。
-rm -rf -- feeds/packages/lang/golang
-git clone --depth=1 --branch 27.x https://github.com/OpenListTeam/packages_lang_golang.git feeds/packages/lang/golang
+# 引入第三方插件。24.10 保留上游 Go feed，避免与 Docker/containerd 的旧构建链冲突。
+if [ "${REPO_BRANCH:-openwrt-25.12}" = "openwrt-25.12" ]; then
+	rm -rf -- feeds/packages/lang/golang
+	git clone --depth=1 --branch 27.x https://github.com/OpenListTeam/packages_lang_golang.git feeds/packages/lang/golang
+	OPENLIST_REF="v4.2.9"
+else
+	OPENLIST_REF="v4.1.9"
+fi
 
 git clone --depth=1 https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
 git clone --depth=1 https://github.com/EasyTier/luci-app-easytier.git package/luci-app-easytier
 git clone --depth=1 https://github.com/hello-yunshu/luci-app-nginx-manager.git package/luci-app-nginx-manager
-git clone --depth=1 https://github.com/OpenListTeam/OpenList-OpenWRT.git package/openlist
+git clone --depth=1 --branch "${OPENLIST_REF}" https://github.com/OpenListTeam/OpenList-OpenWRT.git package/openlist
 
 # 写入插件选择。
 cat >> .config <<'EOF'
 
 CONFIG_PACKAGE_luci-app-amlogic=y
-CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-homeproxy=y
 CONFIG_PACKAGE_luci-app-easytier=y

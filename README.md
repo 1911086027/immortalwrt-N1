@@ -6,6 +6,7 @@
 
 - ImmortalWrt `openwrt-24.10`、`openwrt-25.12` 双版本构建
 - N1 Amlogic 支持、zram、irqbalance、USB 存储和常用管理工具
+- 两个版本都保留 `luci-app-dockerman`，24.10 使用上游默认 Go 工具链以兼容 Docker/containerd
 - Nginx HTTPS 反向代理与 LuCI 管理器
 - OpenList、HomeProxy、EasyTier、DDNS-Go 等可选服务
 - ARM64 Docker 镜像构建和 Docker Hub 发布
@@ -30,6 +31,8 @@ HomeProxy、EasyTier、OpenList WAN 访问和 Wi-Fi 默认不会自动启用或�
 ```
 
 Docker Hub 需要配置 `DOCKERHUB_USERNAME` 和 `DOCKERHUB_PASSWORD` Secrets。
+
+GitHub Release 标签会使用 `OpenWrt_24.10_时间` 或 `OpenWrt_25.12_时间`，可直接区分固件源码版本。
 
 ## Docker 镜像边界
 

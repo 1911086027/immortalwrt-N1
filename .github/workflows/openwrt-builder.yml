@@ -30,13 +30,16 @@ jobs:
         repo_branch:
           - repo: openwrt-24.10
             docker_tag: personal-24.10
+            release_version: 24.10
           - repo: openwrt-25.12
             docker_tag: personal-25.12
+            release_version: 25.12
     runs-on: ubuntu-22.04
     timeout-minutes: 180
     env:
       REPO_BRANCH: ${{ matrix.repo_branch.repo }}
       DOCKER_TAG: ${{ matrix.repo_branch.docker_tag }}
+      RELEASE_VERSION: ${{ matrix.repo_branch.release_version }}
     permissions:
       contents: write
       actions: write
@@ -174,7 +177,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       if: ${{ env.tag_status == 'success' && !cancelled() }}
       with:
-        tag_name: OpenWrt_${{ env.REPO_BRANCH }}_${{ env.PACKAGED_OUTPUTDATE }}
+        tag_name: OpenWrt_${{ env.RELEASE_VERSION }}_${{ env.PACKAGED_OUTPUTDATE }}
         files: ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz
         body_path: release.txt
         token: ${{ github.token }}
@@ -244,7 +247,7 @@ jobs:
       if: ${{ env.UPLOAD_RELEASE == 'true' && !failure() && !cancelled() }}
       env:
         GH_TOKEN: ${{ github.token }}
-        RELEASE_PREFIX: OpenWrt_${{ env.REPO_BRANCH }}_
+        RELEASE_PREFIX: OpenWrt_${{ env.RELEASE_VERSION }}_
       run: |
         set -Eeuo pipefail
         mapfile -t old_releases < <(
