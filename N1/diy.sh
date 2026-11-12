@@ -23,13 +23,16 @@ git clone --depth=1 https://github.com/OpenListTeam/OpenList-OpenWRT.git package
 cat >> .config <<'EOF'
 
 CONFIG_PACKAGE_luci-app-amlogic=y
-CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-homeproxy=y
 CONFIG_PACKAGE_luci-app-easytier=y
 CONFIG_PACKAGE_luci-app-nginx-manager=y
 CONFIG_PACKAGE_luci-app-openlist=y
 EOF
+
+if [[ "${REPO_BRANCH:-}" != "openwrt-24.10" ]]; then
+  echo 'CONFIG_PACKAGE_luci-app-dockerman=y' >> .config
+fi
 
 # 修改默认管理地址。
 sed -i 's/192.168.1.1/192.168.128.3/g' package/base-files/files/bin/config_generate
