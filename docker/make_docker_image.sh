@@ -29,14 +29,25 @@ find_openwrt() {
     echo -e "${STEPS} 开始查找 OpenWrt rootfs 文件..."
 
     mapfile -t rootfs_files < <(find "${openwrt_path}" -mindepth 3 -maxdepth 3 -type f -name '*rootfs.tar.gz' -print | sort)
-    if [[ "${#rootfs_files[@]}" -eq 1 ]]; then
-        openwrt_file_name="${rootfs_files[0]}"
-        echo -e "${INFO} 找到 OpenWrt 文件：[ ${openwrt_file_name##*/} ]"
-    elif [[ "${#rootfs_files[@]}" -eq 0 ]]; then
+    if [[ "${#rootfs_files[@]}" -eq 0 ]]; then
         error_msg "在 [ ${openwrt_path} ] 中找不到 rootfs.tar.gz。"
+    fi
+
+    # 新版 OpenWrt 会同时生成 generic-rootfs 和 generic-targz-rootfs，
+    # Docker 镜像应使用未带 targz 标记的 canonical rootfs。
+    mapfile -t canonical_rootfs_files < <(
+        printf '%s\n' "${rootfs_files[@]}" | grep -v -- '-targz-rootfs\.tar\.gz$' || true
+    )
+    if [[ "${#canonical_rootfs_files[@]}" -eq 1 ]]; then
+        openwrt_file_name="${canonical_rootfs_files[0]}"
+    elif [[ "${#canonical_rootfs_files[@]}" -eq 0 && "${#rootfs_files[@]}" -eq 1 ]]; then
+        openwrt_file_name="${rootfs_files[0]}"
+    elif [[ "${#canonical_rootfs_files[@]}" -gt 1 ]]; then
+        error_msg "找到多个候选 rootfs.tar.gz，请清理构建产物后重试：${canonical_rootfs_files[*]}"
     else
         error_msg "找到多个 rootfs.tar.gz，请清理构建产物后重试：${rootfs_files[*]}"
     fi
+    echo -e "${INFO} 找到 OpenWrt 文件：[ ${openwrt_file_name##*/} ]"
 
     [[ -f "${docker_path}/Dockerfile" ]] || error_msg "缺少 Dockerfile。"
 }
@@ -104,7 +115,7 @@ make_dockerimg() {
     mv -f -- "${current_path}/${docker_rootfs_file}" "${out_path}"
     echo -e "${INFO} Docker rootfs 打包成功。"
 
-    cd ${current_path}
+    cd "${current_path}"
 
     cp -f -- "${docker_path}/Dockerfile" "${out_path}"
     echo -e "${INFO} Dockerfile 复制成功。"
