@@ -13,7 +13,18 @@ rm -rf -- package/luci-app-amlogic
 if [ "${REPO_BRANCH:-openwrt-25.12}" = "openwrt-25.12" ]; then
 	rm -rf -- feeds/packages/lang/golang
 	git clone --depth=1 --branch 27.x https://github.com/OpenListTeam/packages_lang_golang.git feeds/packages/lang/golang
-	OPENLIST_REF="v4.2.9"
+	# 25.12 跟随 OpenList 最新 Release，避免固件长期停留在旧版本。
+	OPENLIST_REF="$(
+		curl -fsSL https://api.github.com/repos/OpenListTeam/OpenList/releases/latest |
+			python3 -c 'import json, sys; print(json.load(sys.stdin)["tag_name"])'
+	)"
+	case "${OPENLIST_REF}" in
+		v[0-9]*.[0-9]*.[0-9]*) ;;
+		*) printf '无效的 OpenList 最新版本标签: %s\n' "${OPENLIST_REF}" >&2; exit 1 ;;
+	esac
+	git ls-remote --exit-code --tags \
+		https://github.com/OpenListTeam/OpenList-OpenWRT.git \
+		"refs/tags/${OPENLIST_REF}" >/dev/null
 else
 	# 24.10 原生 Go 为 1.23.x；4.1.10 是仍兼容该工具链的最新 OpenList 版本。
 	OPENLIST_REF="v4.1.10"
