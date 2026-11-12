@@ -6,7 +6,7 @@
 
 - ImmortalWrt `openwrt-24.10`、`openwrt-25.12` 双版本构建
 - N1 Amlogic 支持、zram、irqbalance、USB 存储和常用管理工具
-- 两个版本都保留 `luci-app-dockerman`，24.10 使用上游默认 Go 工具链以兼容 Docker/containerd
+- 两个版本都保留 `luci-app-dockerman`，24.10 使用原生 Go 和兼容该工具链的最新 OpenList 4.1.10，25.12 使用 OpenList 4.2.9
 - Nginx HTTPS 反向代理与 LuCI 管理器
 - OpenList、HomeProxy、EasyTier、DDNS-Go 等可选服务
 - ARM64 Docker 镜像构建和 Docker Hub 发布

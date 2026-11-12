@@ -15,7 +15,8 @@ if [ "${REPO_BRANCH:-openwrt-25.12}" = "openwrt-25.12" ]; then
 	git clone --depth=1 --branch 27.x https://github.com/OpenListTeam/packages_lang_golang.git feeds/packages/lang/golang
 	OPENLIST_REF="v4.2.9"
 else
-	OPENLIST_REF="v4.1.9"
+	# 24.10 原生 Go 为 1.23.x；4.1.10 是仍兼容该工具链的最新 OpenList 版本。
+	OPENLIST_REF="v4.1.10"
 fi
 
 git clone --depth=1 https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
