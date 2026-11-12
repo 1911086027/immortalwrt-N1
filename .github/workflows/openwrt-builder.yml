@@ -13,7 +13,6 @@ on:
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: openwrt-25.12
   CONFIG_FILE: N1/.config
   DIY_SH: N1/diy.sh
   FILES: N1/files
@@ -25,8 +24,16 @@ env:
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        repo_branch:
+          - openwrt-24.10
+          - openwrt-25.12
     runs-on: ubuntu-22.04
     timeout-minutes: 180
+    env:
+      REPO_BRANCH: ${{ matrix.repo_branch }}
     permissions:
       contents: write
       actions: write
@@ -164,7 +171,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       if: ${{ env.tag_status == 'success' && !cancelled() }}
       with:
-        tag_name: OpenWrt_${{ env.PACKAGED_OUTPUTDATE }}
+        tag_name: OpenWrt_${{ env.REPO_BRANCH }}_${{ env.PACKAGED_OUTPUTDATE }}
         files: ${{ env.PACKAGED_OUTPUTPATH }}/*.img.gz
         body_path: release.txt
         token: ${{ github.token }}
@@ -200,9 +207,9 @@ jobs:
       with:
         images: ${{ env.DOCKER_IMAGE }}
         tags: |
-          type=raw,value=latest
           type=raw,value=${{ env.REPO_BRANCH }}
-          type=sha,prefix=sha-
+          type=raw,value=latest,enable=${{ env.REPO_BRANCH == 'openwrt-25.12' }}
+          type=sha,prefix=${{ env.REPO_BRANCH }}-sha-
 
     - name: 登录 Docker Hub
       if: ${{ env.docker_status == 'success' && !failure() && !cancelled() }}
@@ -233,8 +240,20 @@ jobs:
         token: ${{ github.token }}
 
     - name: 删除自动发布的旧固件
-      uses: dev-drprasad/delete-older-releases@master
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 2
-        delete_tags : true
+      if: ${{ env.UPLOAD_RELEASE == 'true' && !failure() && !cancelled() }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+        RELEASE_PREFIX: OpenWrt_${{ env.REPO_BRANCH }}_
+      run: |
+        set -Eeuo pipefail
+        mapfile -t old_releases < <(
+          gh release list --limit 100 --json tagName,createdAt \
+            --jq ".[] | select(.tagName | startswith(\"${RELEASE_PREFIX}\")) | [.createdAt, .tagName] | @tsv" |
+            sort -r |
+            tail -n +3 |
+            cut -f2
+        )
+        for release_tag in "${old_releases[@]}"; do
+          [ -n "$release_tag" ] || continue
+          gh release delete "$release_tag" --yes --cleanup-tag
+        done
