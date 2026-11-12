@@ -17,7 +17,7 @@ git clone --depth=1 --branch 27.x https://github.com/OpenListTeam/packages_lang_
 git clone --depth=1 https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
 git clone --depth=1 https://github.com/EasyTier/luci-app-easytier.git package/luci-app-easytier
 git clone --depth=1 https://github.com/hello-yunshu/luci-app-nginx-manager.git package/luci-app-nginx-manager
-git clone --depth=1 --branch v4.2.9 https://github.com/OpenListTeam/OpenList-OpenWRT.git package/openlist
+git clone --depth=1 https://github.com/OpenListTeam/OpenList-OpenWRT.git package/openlist
 
 # 写入插件选择。
 cat >> .config <<'EOF'
